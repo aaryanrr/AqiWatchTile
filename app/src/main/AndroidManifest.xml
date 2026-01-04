@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+>
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+    <application
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:theme="@android:style/Theme.DeviceDefault">
+
+        <service
+                android:name=".AqiTileService"
+                android:exported="true"
+                android:label="AQI Monitor"
+                android:permission="com.google.android.wearable.permission.BIND_TILE_PROVIDER">
+
+            <intent-filter>
+                <action android:name="androidx.wear.tiles.action.BIND_TILE_PROVIDER"/>
+            </intent-filter>
+
+            <meta-data
+                    android:name="androidx.wear.tiles.PREVIEW"
+                    android:resource="@drawable/common_google_signin_btn_icon_dark"/>
+        </service>
+
+        <activity
+                android:name=".CitySetupActivity"
+                android:exported="true"
+                android:label="Set City"
+                android:theme="@android:style/Theme.DeviceDefault"/>
+
+    </application>
+</manifest>

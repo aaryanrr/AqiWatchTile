@@ -1,0 +1,1 @@
+GET https://api.openweathermap.org/data/2.5/air_pollution?lat=LAT&lon=LON&appid=YOUR_TOKEN
