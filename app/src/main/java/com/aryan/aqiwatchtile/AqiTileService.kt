@@ -1,12 +1,9 @@
 package com.aryan.aqiwatchtile
 
 import android.content.Context
-import androidx.wear.protolayout.ActionBuilders
+import androidx.wear.protolayout.*
 import androidx.wear.protolayout.ColorBuilders.argb
 import androidx.wear.protolayout.LayoutElementBuilders.*
-import androidx.wear.protolayout.ModifiersBuilders
-import androidx.wear.protolayout.ResourceBuilders
-import androidx.wear.protolayout.TimelineBuilders
 import androidx.wear.protolayout.material.CircularProgressIndicator
 import androidx.wear.protolayout.material.ProgressIndicatorColors
 import androidx.wear.protolayout.material.Text
@@ -24,7 +21,7 @@ class AqiTileService : TileService() {
     private val serviceScope = CoroutineScope(Dispatchers.IO)
 
     // YOUR WAQI TOKEN HERE
-    private val token = "YOUR_TOKEN_HERE"
+    private val token = "YOUR_token_HERE"
 
     override fun onTileRequest(requestParams: RequestBuilders.TileRequest): ListenableFuture<TileBuilders.Tile> {
         return serviceScope.future {
@@ -32,7 +29,7 @@ class AqiTileService : TileService() {
             val prefs = getSharedPreferences("AQI_PREFS", MODE_PRIVATE)
             val lat = prefs.getFloat("LAT", 26.8467f).toDouble()
             val lon = prefs.getFloat("LON", 80.9462f).toDouble()
-            val cityName = prefs.getString("CITY", "Setup") ?: "Setup"
+            val cityName = prefs.getString("CITY", "Tap to Setup") ?: "Tap to Setup"
 
             var aqiValue: Int
             try {
@@ -49,6 +46,7 @@ class AqiTileService : TileService() {
 
             TileBuilders.Tile.Builder()
                 .setResourcesVersion("1")
+                .setFreshnessIntervalMillis(15 * 60 * 1000)
                 .setTileTimeline(
                     TimelineBuilders.Timeline.Builder()
                         .addTimelineEntry(
@@ -69,23 +67,27 @@ class AqiTileService : TileService() {
     }
 
     private fun buildLayout(aqiValue: Int, cityName: String, context: Context): LayoutElement {
-        if (aqiValue == -1) {
-            return Box.Builder().addContent(Text.Builder(context, "Err").build()).build()
-        }
-
         val maxScale = 500f
         val progressRatio = (aqiValue / maxScale).coerceAtMost(1.0f)
-        val aqiColor = getAqiColor(aqiValue)
-        val statusText = getAqiLabel(aqiValue)
+        val aqiColor = if (aqiValue == -1) 0xFFAAAAAA.toInt() else getAqiColor(aqiValue)
+        val statusText = if (aqiValue == -1) "Error" else getAqiLabel(aqiValue)
+        val displayText = if (aqiValue == -1) "--" else aqiValue.toString()
 
-        val launchIntent = ActionBuilders.LaunchAction.Builder()
+        val refreshAction = ActionBuilders.LoadAction.Builder().build()
+        val refreshClickable = ModifiersBuilders.Clickable.Builder()
+            .setOnClick(refreshAction)
+            .build()
+
+        val setupIntent = ActionBuilders.LaunchAction.Builder()
             .setAndroidActivity(
                 ActionBuilders.AndroidActivity.Builder()
                     .setClassName(CitySetupActivity::class.java.name)
                     .setPackageName(context.packageName)
                     .build()
             ).build()
-        val clickable = ModifiersBuilders.Clickable.Builder().setOnClick(launchIntent).build()
+        val setupClickable = ModifiersBuilders.Clickable.Builder()
+            .setOnClick(setupIntent)
+            .build()
 
         val aqiMeter = CircularProgressIndicator.Builder()
             .setProgress(progressRatio)
@@ -94,7 +96,7 @@ class AqiTileService : TileService() {
             .setCircularProgressIndicatorColors(ProgressIndicatorColors(argb(aqiColor), argb(0xFF333333.toInt())))
             .build()
 
-        val numberText = Text.Builder(context, aqiValue.toString())
+        val numberText = Text.Builder(context, displayText)
             .setTypography(Typography.TYPOGRAPHY_DISPLAY1)
             .setColor(argb(aqiColor))
             .build()
@@ -104,19 +106,35 @@ class AqiTileService : TileService() {
             .setColor(argb(0xFFDDDDDD.toInt()))
             .build()
 
-        val cityLabel = Text.Builder(context, cityName)
+        val cityButton = Text.Builder(context, cityName)
             .setTypography(Typography.TYPOGRAPHY_CAPTION2)
             .setColor(argb(0xFFAAAAAA.toInt()))
+            .setModifiers(
+                ModifiersBuilders.Modifiers.Builder()
+                    .setClickable(setupClickable)
+                    .build()
+            )
+            .build()
+
+        val refreshBtn = Text.Builder(context, "↻ Sync")
+            .setTypography(Typography.TYPOGRAPHY_CAPTION2)
+            .setColor(argb(0xFF00E5FF.toInt()))
+            .setModifiers(
+                ModifiersBuilders.Modifiers.Builder()
+                    .setClickable(refreshClickable)
+                    .build()
+            )
             .build()
 
         val textColumn = Column.Builder()
             .addContent(numberText)
             .addContent(statusLabel)
-            .addContent(cityLabel)
+            .addContent(cityButton)
+            .addContent(Spacer.Builder().setHeight(DimensionBuilders.dp(8f)).build())
+            .addContent(refreshBtn)
             .build()
 
         return Box.Builder()
-            .setModifiers(ModifiersBuilders.Modifiers.Builder().setClickable(clickable).build())
             .addContent(aqiMeter)
             .addContent(textColumn)
             .build()
