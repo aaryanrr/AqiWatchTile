@@ -41,7 +41,7 @@ Tested on **Samsung Galaxy Watch 4**, but compatible with most modern Wear OS de
 
 ### 1. Clone the Repository
 
-    git clone https://github.com/your-username/aqi-watch-tile.git
+    git clone https://github.com/aaryanrr/aqi-watch-tile.git
     open aqi-watch-tile
 
 ### 2. Get API Keys
