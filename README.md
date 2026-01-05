@@ -20,7 +20,7 @@ Tested on **Samsung Galaxy Watch 4**, but compatible with most modern Wear OS de
 
 ## 📱 Screenshots
 
-<img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/1871b44d-4361-42ee-b472-e0fd67a4fcbe" />
+<img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/4651634f-ff80-4666-8345-a154c320848b" />
 <img width="384" height="384" alt="image" src="https://github.com/user-attachments/assets/d03cac4b-3144-4b47-8b7b-e79157ae4f33" />
 
 ---
