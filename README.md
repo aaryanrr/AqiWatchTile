@@ -13,7 +13,8 @@ Tested on **Samsung Galaxy Watch 4**, but compatible with most modern Wear OS de
 * **0-500 Scale:** Supports the full standard AQI scale, not just simplified 1-5 levels.
 * **Manual City Setup:** Avoids battery-draining GPS checks by allowing users to type and save their city (e.g., "New Delhi") once.
 * **Geocoding:** Uses OpenWeatherMap Geocoding to translate city names into coordinates.
-* **Instant Sync:** Forces a Tile refresh immediately after updating settings.
+* **Interval Based Refresh:** The data is automatically updated at an interval of 15 minutes.
+* **Manual Sync:** Use the SYNC button to force refresh the AQI data.
 
 ---
 
