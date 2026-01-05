@@ -27,12 +27,4 @@
 
 ## **Setting up the Environment:** 💻
 
-### *This guides you through the setting up the Environment for working with the project.*
-
-<br>
-
-1. *Fork the repository.*
-2. *Clone it to your local machine to work with the Project.*
-3. **ADD ANY OTHERS STEPS IN HERE!**
-4. *Open the Project in the Editor of your choice.*
-5. *Congratulations, you are now ready to Contribute.* 🎉
+### *Follow the Steps as mentioned in the README*
